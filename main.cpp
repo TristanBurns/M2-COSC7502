@@ -18,6 +18,7 @@
 #define t 2                     // Tournament size (parents competing for selection).
 #define verbose true            // Verbose output (cout) for verification.
 #define printfitness false      // Best fitness per generation output (cout).
+#define printrank 1            // Island (rank) to print out if verbose is true. 
 
 //######################################################################################
 //####                                                                              ####
@@ -39,7 +40,7 @@ int main(int argc, char** argv)
    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
   
-   printf("Initialising arrays on island %d out of %d\n", my_rank+1, world_size);
+
     // Initialise Arrays on each island
     int m_fraction = m/world_size;
     //  p[m/worldsize][n] - Array to store population with m individuals with chromosome size n.
@@ -52,12 +53,43 @@ int main(int argc, char** argv)
     int generation = 0;
     //  fitness[maxgenerations] - Array to store best (highest) fitness per generation.
     int *fitness = static_cast<int*>(malloc((maxgenerations)*sizeof(int)));
-    printf("Successfully created arrays on island %d out of %d\n", my_rank+1, world_size);
+
     
     // Deterministic and differe random seed for each island (rank).
     std::srand(seed+my_rank);
     // Initialise fraction of population on each island.
-   RandomPopulationVerbose(p, n, m_fraction, my_rank);
+
+      
+    if (verbose)
+    {
+      RandomPopulationVerbose(p, n, m_fraction, my_rank, printrank);
+      best = MaxFitnessVerbose((int *)p, n, m_fraction, my_rank, printrank);
+      while ((best != n) && (generation < maxgenerations))
+      {
+         fitness[generation] = best;
+         if(my_rank==printrank)
+         {
+            std::cout << " ------------ Generation: " << generation << " Best Fitness: " << best << " --------------" << std::endl;
+         }
+         
+         CrossoverVerbose(t, (int *)p, (int *)q, n, m_fraction, my_rank, printrank);
+         MutateVerbose((int *)q, n, m_fraction, my_rank, printrank);
+         NextGenerationVerbose((int *)p, (int *)q, n, m_fraction, my_rank, printrank);
+         best = MaxFitness((int *)p, n, m_fraction);
+         generation++;
+      }
+      fitness[generation] = best;
+      if(my_rank==printrank)
+      {
+      std::cout << " ------------ Generation: " << generation << " Best Fitness: " << fitness[generation] << " --------------" << std::endl;
+      }
+    }
+    else
+    {
+
+    }
+
 
    MPI_Finalize();
+
 }

@@ -6,7 +6,7 @@
 #define q(I, J) *((q + (I)*n) + (J))
 
 
-void RandomPopulationVerbose(int *p, int n, int m, int my_rank)
+void RandomPopulationVerbose(int *p, int n, int m, int my_rank, int print_rank)
 /*
 Fill static 2d int array at pointer *p with m indivduals with n
 chromosmomes, gene values 0 or 1 (verbose cout).
@@ -19,7 +19,11 @@ chromosmomes, gene values 0 or 1 (verbose cout).
             p(i, j) = ((int)std::rand() % 2);
             std::cout << p(i, j);
         }
-        std::cout << " -> Individual " << i << " , Island "<< my_rank <<std::endl;
+        if(my_rank==print_rank)
+        {
+            std::cout << " -> Individual " << i << " , Island "<< my_rank <<std::endl;
+        }
+        
     }
     return;
 }
@@ -40,7 +44,7 @@ chromosmomes, gene values 0 or 1.
     return;
 }
 
-int MaxFitnessVerbose(int *p, int n, int m)
+int MaxFitnessVerbose(int *p, int n, int m, int my_rank, int print_rank)
 /*
 Return integer of best (highest) fitness for the pointer *p with m indivduals with n
 chromosmomes. Fitness is defined as the sum of the individuals chromosomes (verbose cout).
@@ -49,7 +53,10 @@ chromosmomes. Fitness is defined as the sum of the individuals chromosomes (verb
     int best = 0;
     int besti = 0;
     int sum = 0;
-    std::cout << "Running MaxFitness (Verbose)" << std::endl;
+    if(my_rank==print_rank)
+    {
+        std::cout << "Running MaxFitness (Verbose)" << std::endl;
+    }
     for (int i = 0; i < m; i++)
     {
         sum = 0;
@@ -58,8 +65,10 @@ chromosmomes. Fitness is defined as the sum of the individuals chromosomes (verb
             std::cout << p(i, j);
             sum += p(i, j);
         }
+        if(my_rank==print_rank)
+        {
         std::cout << " -> Individual " << i << ", Fitness: " << sum << std::endl;
-
+        }
         if (sum > best)
         {
             best = sum;
@@ -136,7 +145,7 @@ index of individual with highest fitness sampled.
     return besti;
 }
 
-void CrossoverVerbose(int t, int *p, int *q, int n, int m)
+void CrossoverVerbose(int t, int *p, int *q, int n, int m, int my_rank, int print_rank)
 /*
 Perform single point crossover on parents from tournament selection of size t from population array *p.
 Fill array *q with childeren from single point crossover (verbose cout).
@@ -145,7 +154,11 @@ Fill array *q with childeren from single point crossover (verbose cout).
     int c = 0;
     int individual1;
     int individual2;
-    std::cout << "Running Crossover (Verbose)" << std::endl;
+    if(my_rank==print_rank)
+    {
+        std::cout << "Running Crossover (Verbose)" << std::endl;
+    }
+    
     for (int i = 0; i < m; i += 2)
     {
         c = (std::rand() % n);
@@ -162,9 +175,10 @@ Fill array *q with childeren from single point crossover (verbose cout).
             q(i, j) = p(individual2, j);
             q(i + 1, j) = p(individual1, j);
         }
-
+        if(my_rank==print_rank)
+        {
         std::cout << "Crossover at chromosome " << c << ":" << std::endl;
-
+        
         for (int j = 0; j < n; j++)
         {
             if (j == c)
@@ -220,6 +234,7 @@ Fill array *q with childeren from single point crossover (verbose cout).
         std::cout << " -> Child " << i + 1 ;
         std::cout << std::endl;
     }
+    }
     return;
 }
 
@@ -254,7 +269,7 @@ Fill array *q with childeren from single point crossover.
     return;
 }
 
-void MutateVerbose(int *q, int n, int m)
+void MutateVerbose(int *q, int n, int m, int my_rank, int print_rank)
 /*
 Perform random bit flip mutation on individuals in array *q of m individuals
 with chromosome length n.  Each chromosome has a probablility 1/n of having a 
@@ -265,7 +280,11 @@ bitflip mutation applied (verbose cout).
     int mu;
     bool mutated;
 
-    std::cout << "Running Mutate (Verbose)" << std::endl;
+    if(my_rank==print_rank)
+    {
+        std::cout << "Running Mutate (Verbose)" << std::endl;
+    }
+    
 
     for (int i = 0; i < m; i++)
     {
@@ -279,22 +298,31 @@ bitflip mutation applied (verbose cout).
                 (q(i, j)) = 1 - (q(i, j));
                 mutated = true;
                 c = j;
+                if(my_rank==print_rank)
+                {
                 std::cout << "*" << q(i, j) << "*";
+                }
             }
             else
             {
+                if(my_rank==print_rank)
+                {
                 std::cout << " " << q(i, j) << " ";
+                }
             }
         }
-
-        if (mutated)
+        if(my_rank==print_rank)
         {
-            std::cout << "-> Child " << i << " Mutation at *_* " << std::endl;
-        }
+            if (mutated)
+            {
+                std::cout << "-> Child " << i << " Mutation at *_* " << std::endl;
+            }
 
-        else
-        {
-            std::cout << std::endl;
+            else
+            {
+                std::cout << std::endl;
+            
+            }
         }
     }
     return;
@@ -327,12 +355,15 @@ bitflip mutation applied (verbose cout).
 
 
 
-void NextGenerationVerbose(int *p, int *q, int n, int m)
+void NextGenerationVerbose(int *p, int *q, int n, int m, int my_rank, int print_rank)
 /*
 Assign children in array *q to population in array *p for next generation (verbose cout).
 */
 {
-    std::cout << "Assigning next generation (Verbose)" << std::endl;
+    if(my_rank==print_rank)
+    {
+        std::cout << "Assigning next generation (Verbose)" << std::endl;
+    }
     for (int i = 0; i < m; i++)
     {
         for (int j = 0; j < n; j++)
@@ -340,7 +371,10 @@ Assign children in array *q to population in array *p for next generation (verbo
             std::cout << q(i, j);
             p(i, j) = q(i, j);
         }
-        std::cout <<" -> Child " << i << " to Individual " << i << ", Fitness: " << IndividualFitness(i, p, n, m) << std::endl;
+        if(my_rank==print_rank)
+        {
+            std::cout <<" -> Child " << i << " to Individual " << i << ", Fitness: " << IndividualFitness(i, p, n, m) << std::endl;
+        }
     }
 }
 
