@@ -1,5 +1,10 @@
 #include "functions.h"
 #include <iostream>
+#include <mpi.h>
+#include <cstdio>
+#include <iostream>
+#include <stdlib.h>
+#include <algorithm>
 
 // Macros for array pointer indexing.
 #define p(I, J) *((p + (I)*n) + (J))
@@ -403,5 +408,41 @@ Print (cout) array comma separated values for generation and best (maximum) fitn
     for (int i = 0; i < (generation + 1); i++)
     {
         std::cout << i << "," << fitness[i] << std::endl;
+    }
+}
+
+void CompareRankFitnessVerbose(int best_island, int& best_global, int& best_rank, int *fitnesses,  int n, int my_rank, int print_rank, int world_size)
+{
+    
+    MPI_Allgather(&best_island, 1, MPI_INT, fitnesses, 1, MPI_INT, MPI_COMM_WORLD);
+    for(int i=0;i<world_size; i++)
+    {
+        if(my_rank==print_rank)
+        {
+            std::cout << "Island " << i <<" Fitness: " << fitnesses[i] << std::endl;
+           //std::cout << "best_global inside" << best_global << std::endl;
+        }
+
+
+    }
+    
+    
+    best_global =*std::max_element(fitnesses, fitnesses + world_size);
+    //std::cout << "Best_global " << best_global <<std::endl;
+    //best_rank = *std::distance(*fitnesses, best_global);
+
+    
+}
+
+
+void CompareRankFitness(int best_island, int& best_global, int& best_rank, int* fitnesses,int n, int world_size)
+{
+    MPI_Allgather(&best_island, 1, MPI_INT, fitnesses, 1, MPI_INT, MPI_COMM_WORLD);
+    for(int i=0;i<world_size; i++)
+    {
+        if(fitnesses[i]==n){
+            best_rank = i;
+            best_global = fitnesses[i];
+        }
     }
 }

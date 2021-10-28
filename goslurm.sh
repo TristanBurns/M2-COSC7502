@@ -23,5 +23,6 @@ if [ ! -f GeneticAlgorithm ] ; then
    echo "you probably need to compile code"
    exit 2
 fi
+export current_time=$(date "+%Y.%m.%d-%H.%M.%S")
 
-time mpiexec -n $1 ./GeneticAlgorithm >> outputfile_mpi.txt
+time mpiexec -n $1 ./GeneticAlgorithm >> outputfile_mpi_$current_time.txt
