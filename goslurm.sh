@@ -1,12 +1,12 @@
 #!/bin/bash -l
 #
 #SBATCH --job-name=MPI_testing_TB
-#SBATCH --nodes=2
-#SBATCH --ntasks=2
-#SBATCH --ntasks-per-node=1
+#SBATCH --nodes=1
+#SBATCH --ntasks=4
+#SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=1G # memory (MB)
-#SBATCH --time=0-00:05 # time (D-HH:MM)
+#SBATCH --mem-per-cpu=4G # memory (MB)
+#SBATCH --time=0-00:01 # time (D-HH:MM)
 
 
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK}

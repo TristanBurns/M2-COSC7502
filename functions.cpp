@@ -420,29 +420,53 @@ void CompareRankFitnessVerbose(int best_island, int& best_global, int& best_rank
         if(my_rank==print_rank)
         {
             std::cout << "Island " << i <<" Fitness: " << fitnesses[i] << std::endl;
-           //std::cout << "best_global inside" << best_global << std::endl;
         }
 
-
     }
-    
-    
     best_global =*std::max_element(fitnesses, fitnesses + world_size);
-    //std::cout << "Best_global " << best_global <<std::endl;
-    //best_rank = *std::distance(*fitnesses, best_global);
-
-    
 }
 
 
 void CompareRankFitness(int best_island, int& best_global, int& best_rank, int* fitnesses,int n, int world_size)
 {
     MPI_Allgather(&best_island, 1, MPI_INT, fitnesses, 1, MPI_INT, MPI_COMM_WORLD);
+    best_global =*std::max_element(fitnesses, fitnesses + world_size);
+}
+
+void Migrate(int *p, int n, int m, int num_migrations, int my_rank, int world_size)
+{
+   
+    int rand_rank;
+    int rand_individual;
+    
+    
     for(int i=0;i<world_size; i++)
     {
-        if(fitnesses[i]==n){
-            best_rank = i;
-            best_global = fitnesses[i];
+        rand_individual = ((int)std::rand() % (m-num_migrations));
+        if(i<(world_size-1))
+        {
+            if(my_rank==i)
+            {
+                //MPI_Send(&(*(p + rand_individual*n)), n*num_migrations, MPI_INT, rand_rank, 0, MPI_COMM_WORLD);
+                MPI_Send(&(p[rand_individual*n]), n*num_migrations, MPI_INT, i+1, 0, MPI_COMM_WORLD);
+            } 
+            else if(my_rank==(i+1))
+            {
+                //MPI_Recv(&(*(p + rand_individual*n)), n*num_migrations, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                MPI_Recv(&(p[rand_individual*n]), n*num_migrations, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            }
+        }else
+        {
+        if(my_rank==i)
+            {
+                //MPI_Send(&(*(p + rand_individual*n)), n*num_migrations, MPI_INT, rand_rank, 0, MPI_COMM_WORLD);
+                MPI_Send(&(p[rand_individual*n]), n*num_migrations, MPI_INT, 0, 0, MPI_COMM_WORLD);
+            } 
+            else if(my_rank==(i+1))
+            {
+                //MPI_Recv(&(*(p + rand_individual*n)), n*num_migrations, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                MPI_Recv(&(p[rand_individual*n]), n*num_migrations, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            }
         }
     }
 }

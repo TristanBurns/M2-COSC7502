@@ -12,14 +12,16 @@
 //####                                                                              ####
 //######################################################################################
 
-#define n 1000                    // Chromosome size (number of genes per individual).
-#define m 100                     // Population size (number of individuals).
+#define n 10000                  // Chromosome size (number of genes per individual).
+#define m 128                    // Population size (number of individuals). **MUST BE A POWER OF 2**
 #define seed 42                 // Psuedorandom number generator seed (std:srand(seed)).
-#define maxgenerations 2000     // Maximum number of generations (while loop limit).
+#define maxgenerations 20000     // Maximum number of generations (while loop limit).
 #define t 2                     // Tournament size (parents competing for selection).
-#define verbose true            // Verbose output (cout) for verification.
-#define printfitness false      // Best fitness per generation output (cout).
-#define printrank 0            // Island (rank) to print out if verbose is true. 
+#define verbose false            // Verbose output (cout) for verification.
+#define printfitness true      // Best fitness per generation output (cout).
+#define printrank 1            // Island (rank) to print out if verbose is true. 
+#define migration true        // Enables migration of (number of) migrants each generation in ring pattern between islands. 
+#define migrants 1            // Number of individuals migrating each generation, must be less than m. 
 
 //######################################################################################
 //####                                                                              ####
@@ -32,6 +34,8 @@
 using namespace std;
 int main(int argc, char** argv)
 {
+   auto start = std::chrono::high_resolution_clock::now();
+
    MPI_Init(&argc, &argv);
 
    int world_size;
@@ -57,13 +61,17 @@ int main(int argc, char** argv)
     //  fitness[maxgenerations] - Array to store best (highest) fitness per generation.
     int *fitness = static_cast<int*>(malloc((maxgenerations)*sizeof(int)));
    
-   int *fitnesses = static_cast<int*>(malloc(world_size*sizeof(int)));
+    int *fitnesses = static_cast<int*>(malloc(world_size*sizeof(int)));
     
     // Deterministic and differe random seed for each island (rank).
     std::srand(seed+my_rank);
     // Initialise fraction of population on each island.
-
-      
+   if(my_rank==printrank)
+   {
+      std::cout << " INITIALISATION SUCCESSFUL --------------" << std::endl;
+   }
+         
+   
     if (verbose)
     {
       RandomPopulationVerbose(p, n, m_fraction, my_rank, printrank);
@@ -80,36 +88,70 @@ int main(int argc, char** argv)
          
          //CrossoverVerbose(t, (int *)p, (int *)q, n, m_fraction, my_rank, printrank);
          Crossover(t, (int *)p, (int *)q, n, m_fraction);
+
+
          //MutateVerbose((int *)q, n, m_fraction, my_rank, printrank);
          Mutate((int *)q, n, m_fraction);
+
+
          //NextGenerationVerbose((int *)p, (int *)q, n, m_fraction, my_rank, printrank);
          NextGeneration((int *)p, (int *)q, n, m_fraction);
+         if(migration)
+         {
+            Migrate((int *)p, n, m_fraction, migrants, my_rank, world_size);
+         }
+         
+
          best_island = MaxFitness((int *)p, n, m_fraction);
-        
+
+
+                
          CompareRankFitnessVerbose(best_island, best_global, best_rank, fitnesses,  n,  my_rank,  printrank,  world_size);
          
-         
-         // if(my_rank==printrank)
-         // {
-         //    std::cout << "best_global outside" << best_global << std::endl;
-         // }
          generation++;
       }
       fitness[generation] = best_island;
-      if(my_rank==printrank)
-      {
-      //std::cout << " ------------ Generation: " << generation << " Best Fitness: " << fitness[generation] << " --------------" << std::endl;
-      //std::cout << " ------------ Island: " << best_rank << " Best Global Fitness: " << best_global << " --------------" << std::endl;
-      }
-
-
+ 
     }
     else
     {
-
+      RandomPopulation(p, n, m_fraction);
+      best_island = MaxFitness((int *)p, n, m_fraction);
+      best_global = best_island; // ***check logic if fails*** TBD
+      
+      while ((best_global != n) && (generation < maxgenerations))
+      {
+         fitness[generation] = best_island;
+         Crossover(t, (int *)p, (int *)q, n, m_fraction);
+         Mutate((int *)q, n, m_fraction);
+         NextGeneration((int *)p, (int *)q, n, m_fraction);
+         if(migration)
+         {
+            Migrate((int *)p, n, m_fraction, migrants, my_rank, world_size);
+         }
+         best_island = MaxFitness((int *)p, n, m_fraction);
+         CompareRankFitness(best_island, best_global, best_rank, fitnesses,  n,  world_size);
+         generation++;
+      }
+      fitness[generation] = best_island;
     }
 
+    if (printfitness && (my_rank==printrank))
+    {
+        PrintFitness(fitness,  generation);
+    }
 
+   
+   auto stop = std::chrono::high_resolution_clock::now();
+   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
+   if (my_rank==printrank)
+   {
+      //TBD Time print function
+      std::cout << "Runtime (microseconds): "<< duration << std::endl;
+   }
+   free(p);
+   free(q);
+   free(fitness);
+   free(fitnesses);
    MPI_Finalize();
-
 }
