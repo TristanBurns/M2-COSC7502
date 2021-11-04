@@ -20,7 +20,8 @@
 #define verbose false            // Verbose output (cout) for verification.
 #define printfitness true      // Best fitness per generation output (cout).
 #define migration true        // Enables migration of (number of) migrants each generation in ring pattern between islands. 
-#define migrants 5           // Number of individuals migrating each generation, must be less than m/number of islands. 
+#define migrants 1           // Number of individuals migrating each generation, must be less than m/number of islands. 
+
 
 //######################################################################################
 //####                                                                              ####
@@ -28,6 +29,7 @@
 //####                                                                              ####
 //######################################################################################
 
+#define migratetype 1           // 0 for ring migraion, 1 for random migration, default ring migration
 #define printrank 0            // Island (rank) to print out if verbose is true.
 
 
@@ -44,8 +46,6 @@ int main(int argc, char** argv)
    int my_rank;
    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
-  
-
     // Initialise Arrays on each island
     int m_fraction = m/world_size;
     //  p[m/worldsize][n] - Array to store population with m individuals with chromosome size n.
@@ -55,13 +55,14 @@ int main(int argc, char** argv)
     //  best - Best (highest) fitness of current generation.
     int best_island;
     int best_global;
-    int best_rank=0;
+    int best_rank = 0;
     //  generation - While loop counter. Initialise first generation (generation 0).
     int generation = 0;
     //  fitness[maxgenerations] - Array to store best (highest) fitness per generation.
     int *fitness = static_cast<int*>(malloc((maxgenerations)*sizeof(int)));
     int *maxfitnesses = static_cast<int*>(malloc(world_size*sizeof(int)));
-    
+    int *rand_rank = static_cast<int*>(malloc(world_size*sizeof(int)));
+
     // Deterministic and different random seed for each island (rank).
     std::srand(seed+my_rank);
     // Initialise fraction of population on each island.
@@ -82,7 +83,7 @@ int main(int argc, char** argv)
          fitness[generation] = best_island;
          if(my_rank==printrank)
          {
-            std::cout << " ------------ Island: " << my_rank << "--------- Generation: " << generation << " Best Fitness: " << best_island << " --------------" << std::endl;
+            std::cout << " ------------ Island: " << my_rank << " Generation: " << generation << " Best Fitness: " << best_island << " --------------" << std::endl;
          }
          
          //CrossoverVerbose(t, (int *)p, (int *)q, n, m_fraction, my_rank, printrank);
@@ -97,7 +98,7 @@ int main(int argc, char** argv)
          NextGeneration((int *)p, (int *)q, n, m_fraction);
          if(migration)
          {
-            Migrate((int *)p, n, m_fraction, migrants, my_rank, world_size);
+            Migrate((int *)p, n, m_fraction, migrants,  (int *)rand_rank, my_rank, printrank, world_size, migratetype);
          }
          
 
@@ -130,7 +131,7 @@ int main(int argc, char** argv)
          NextGeneration((int *)p, (int *)q, n, m_fraction);
          if(migration)
          {
-            Migrate((int *)p, n, m_fraction, migrants, my_rank, world_size);
+            Migrate((int *)p, n, m_fraction, migrants,  (int *)rand_rank, my_rank, printrank, world_size, migratetype);
          }
          best_island = MaxFitness((int *)p, n, m_fraction);
          CompareRankFitness(best_island, best_global, best_rank, maxfitnesses,  n,  world_size);
@@ -140,11 +141,6 @@ int main(int argc, char** argv)
     }
    
    PrintFitnesses(fitness, generation, my_rank, printrank, world_size);
-   //  if (printfitness && (my_rank==printrank))
-   //  {
-   //      PrintFitnesses(fitness, generation, my_rank, printrank, world_size);
-   //      //PrintFitness(fitness,  generation);
-   //  }
 
    
    auto stop = std::chrono::high_resolution_clock::now();
@@ -158,5 +154,6 @@ int main(int argc, char** argv)
    free(q);
    free(fitness);
    free(maxfitnesses);
+   free(rand_rank);
    MPI_Finalize();
 }

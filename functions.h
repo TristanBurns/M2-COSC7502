@@ -17,6 +17,8 @@ void PrintFitness(int fitness[], int generation);
 void PrintFitnesses(int* fitness, int generation, int my_rank, int print_rank, int world_size);
 void CompareRankFitnessVerbose(int best_island, int& best_global, int& best_rank, int* fitnesses,  int n, int my_rank, int print_rank, int world_size);
 void CompareRankFitness(int best_island, int& best_global, int& best_rank, int* fitnesses,int n, int world_size);
-void Migrate(int *p, int n, int m,int num_migrations, int my_rank, int world_size);
+void MigrateRing(int *p, int n, int m,int num_migrations, int my_rank, int world_size);
+void MigrateRand(int *p, int n, int m, int num_migrations, int *rand_rank, int my_rank, int print_rank, int world_size);
+void Migrate(int *p, int n, int m, int num_migrations, int *rand_rank, int my_rank, int print_rank, int world_size, int migrate_type);
 
 #endif

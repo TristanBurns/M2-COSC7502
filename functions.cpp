@@ -491,12 +491,10 @@ void CompareRankFitness(int best_island, int& best_global, int& best_rank, int* 
     best_global =*std::max_element(fitnesses, fitnesses + world_size);
 }
 
-void Migrate(int *p, int n, int m, int num_migrations, int my_rank, int world_size)
+void MigrateRing(int *p, int n, int m, int num_migrations, int my_rank, int world_size)
 {
-   
-    int rand_rank;
     int rand_individual;
-    
+   
     
     for(int i=0;i<world_size; i++)
     {
@@ -527,4 +525,54 @@ void Migrate(int *p, int n, int m, int num_migrations, int my_rank, int world_si
             }
         }
     }
+}
+
+void MigrateRand(int *p, int n, int m, int num_migrations, int *rand_rank, int my_rank, int print_rank, int world_size)
+{
+    int rand_individual;
+
+    if(my_rank==print_rank)
+    {
+        for(int i=0;i<world_size; i++)
+        {
+            rand_rank[i] = ((int)std::rand() % (world_size));
+        }
+    }
+    
+    MPI_Bcast(rand_rank, world_size, MPI_INT, print_rank, MPI_COMM_WORLD);
+    
+
+    for(int i=0;i<world_size; i++)
+    {
+        for(int j=0; j<num_migrations; j++)
+        {
+            if(i!=(rand_rank[i]))
+            {
+                if(my_rank==i)
+                {
+                    rand_individual = ((int)std::rand() % (m));
+                    MPI_Send(&(p[rand_individual*n]), n, MPI_INT, (rand_rank[i]), 0, MPI_COMM_WORLD);
+                }
+                else if(my_rank==(rand_rank[i])){
+                    MPI_Recv(&(p[rand_individual*n]), n, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                }
+            }
+
+        }
+
+
+    }
+}
+
+void Migrate(int *p, int n, int m, int num_migrations, int *rand_rank, int my_rank, int print_rank, int world_size, int migrate_type)
+{
+    if(migrate_type==1)
+    {
+        MigrateRand(p, n, m, num_migrations, rand_rank, my_rank, print_rank, world_size);
+    }
+    else 
+    {
+        MigrateRing(p, n, m, num_migrations, my_rank, world_size);
+    }
+
 }
