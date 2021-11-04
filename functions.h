@@ -14,6 +14,7 @@ void Mutate(int *q, int n, int m);
 void NextGenerationVerbose(int *p, int *q, int n, int m, int my_rank, int print_rank);
 void NextGeneration(int *p, int *q, int n, int m);
 void PrintFitness(int fitness[], int generation);
+void PrintFitnesses(int* fitness, int generation, int my_rank, int print_rank, int world_size);
 void CompareRankFitnessVerbose(int best_island, int& best_global, int& best_rank, int* fitnesses,  int n, int my_rank, int print_rank, int world_size);
 void CompareRankFitness(int best_island, int& best_global, int& best_rank, int* fitnesses,int n, int world_size);
 void Migrate(int *p, int n, int m,int num_migrations, int my_rank, int world_size);

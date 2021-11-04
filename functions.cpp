@@ -411,6 +411,64 @@ Print (cout) array comma separated values for generation and best (maximum) fitn
     }
 }
 
+void PrintFitnesses(int* fitness, int generation, int my_rank, int print_rank, int world_size)
+{   
+    int* generations = static_cast<int*>(malloc(world_size*sizeof(int)));
+ 
+
+    MPI_Allgather(&generation, 1, MPI_INT, generations, 1, MPI_INT, MPI_COMM_WORLD);
+    int maxgenerations =*std::max_element(generations, generations + world_size);
+    int numgenerations = maxgenerations+1;
+    int *fitness_temp = static_cast<int*>(malloc((numgenerations)*sizeof(int)));
+    int *fitnesses = static_cast<int*>(malloc((numgenerations)*world_size*sizeof(int)));
+    //std::cout << "maxgeneration " << maxgenerations << std::endl;
+    
+    for(int i=0; i<numgenerations; i++)
+    {
+        fitness_temp[i] = fitness[i];
+    }
+    
+    MPI_Gather(fitness_temp, numgenerations, MPI_INT, fitnesses, numgenerations, MPI_INT, print_rank, MPI_COMM_WORLD);\
+    
+    if(my_rank==print_rank)
+    {   
+ 
+            for(int i=0; i<numgenerations; i++)
+            {
+                std::cout << i << ", " ;
+                for(int j=0; j<world_size; j++)
+                {
+
+                    std::cout << fitnesses[i+j*numgenerations] <<", ";
+                }
+                 std::cout << std::endl;
+            }
+        
+    }
+    
+    //----> TO BE DELETED 
+
+    // if(my_rank==print_rank)
+    // {   
+    //     for(int j=0; j<world_size; j++)
+    //     {
+    //     std::cout << " generations " << generations[j] ;
+    //     }
+    //     std::cout << std::endl;
+
+    //     std::cout << fitness[numgenerations-1] <<std::endl;
+    //     std::cout << fitness_temp[numgenerations-1] <<std::endl;
+    //     std::cout << fitness[numgenerations] <<std::endl;
+    //     std::cout << fitness_temp[numgenerations] <<std::endl;
+    //     std::cout << fitnesses[numgenerations+print_rank*numgenerations] <<std::endl;
+    // }
+ 
+
+    free(generations);
+    free(fitness_temp);
+    free(fitnesses);
+}
+
 void CompareRankFitnessVerbose(int best_island, int& best_global, int& best_rank, int *fitnesses,  int n, int my_rank, int print_rank, int world_size)
 {
     
@@ -442,7 +500,7 @@ void Migrate(int *p, int n, int m, int num_migrations, int my_rank, int world_si
     
     for(int i=0;i<world_size; i++)
     {
-        rand_individual = ((int)std::rand() % (m-num_migrations));
+        rand_individual = ((int)std::rand() % (m-num_migrations+1));
         if(i<(world_size-1))
         {
             if(my_rank==i)
