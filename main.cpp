@@ -14,13 +14,13 @@
 
 #define n 1024                   // Chromosome size (number of genes per individual).
 #define m 128                    // Population size (number of individuals). ***MUST BE A POWER OF 2***
-#define seed 42                  // Psuedorandom number generator seed (std:srand(seed)).
+#define seed 7270                  // Psuedorandom number generator seed (std:srand(seed)).
 #define maxgenerations 200000    // Maximum number of generations (while loop limit).
 #define t 2                      // Tournament size (parents competing for selection).
 #define verbose false            // Verbose output (cout) for verification.
 #define printfitness true        // Best fitness per generation output (cout).
 #define migration true          // Enables migration of (number of) migrants each generation in ring pattern between islands. 
-#define migrants 16               // Number of individuals migrating each generation, **must be less than m/number of islands (MPI world_size)***. 
+#define migrants 64              // Number of individuals migrating each generation, **must be less than m/number of islands (MPI world_size)***. 
 
 
 //######################################################################################
@@ -70,8 +70,6 @@ int main(int argc, char** argv)
     // Deterministic and different random seed for each island (rank).
     std::srand(seed+my_rank);
     
-        
-   
     if (verbose)
     {
       // Initialise fraction of population on each island.
