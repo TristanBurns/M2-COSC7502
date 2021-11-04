@@ -358,8 +358,6 @@ bitflip mutation applied (verbose cout).
     return;
 }
 
-
-
 void NextGenerationVerbose(int *p, int *q, int n, int m, int my_rank, int print_rank)
 /*
 Assign children in array *q to population in array *p for next generation (verbose cout).
@@ -412,6 +410,10 @@ Print (cout) array comma separated values for generation and best (maximum) fitn
 }
 
 void PrintFitnesses(int* fitness, int generation, int my_rank, int print_rank, int world_size)
+/*
+Gather all islands (ranks) fitness arrays to print_rank (root) and print (cout) array comma separated values
+for generation and best (maximum) fitness for each island. Call once at end of program.
+*/
 {   
     int* generations = static_cast<int*>(malloc(world_size*sizeof(int)));
  
@@ -421,7 +423,6 @@ void PrintFitnesses(int* fitness, int generation, int my_rank, int print_rank, i
     int numgenerations = maxgenerations+1;
     int *fitness_temp = static_cast<int*>(malloc((numgenerations)*sizeof(int)));
     int *fitnesses = static_cast<int*>(malloc((numgenerations)*world_size*sizeof(int)));
-    //std::cout << "maxgeneration " << maxgenerations << std::endl;
     
     for(int i=0; i<numgenerations; i++)
     {
@@ -432,46 +433,34 @@ void PrintFitnesses(int* fitness, int generation, int my_rank, int print_rank, i
     
     if(my_rank==print_rank)
     {   
- 
-            for(int i=0; i<numgenerations; i++)
+        std::cout << "Generation";
+        for(int j=0; j<world_size; j++)
+        {
+            std::cout << ", Fitness Island " << j;
+        }
+        std::cout << std::endl;
+        for(int i=0; i<numgenerations; i++)
+        {
+            std::cout << i << ", " ;
+            for(int j=0; j<world_size; j++)
             {
-                std::cout << i << ", " ;
-                for(int j=0; j<world_size; j++)
-                {
-
-                    std::cout << fitnesses[i+j*numgenerations] <<", ";
-                }
-                 std::cout << std::endl;
+                std::cout << fitnesses[i+j*numgenerations] <<", ";
             }
-        
+            std::cout << std::endl;
+        }
     }
     
-    //----> TO BE DELETED 
-
-    // if(my_rank==print_rank)
-    // {   
-    //     for(int j=0; j<world_size; j++)
-    //     {
-    //     std::cout << " generations " << generations[j] ;
-    //     }
-    //     std::cout << std::endl;
-
-    //     std::cout << fitness[numgenerations-1] <<std::endl;
-    //     std::cout << fitness_temp[numgenerations-1] <<std::endl;
-    //     std::cout << fitness[numgenerations] <<std::endl;
-    //     std::cout << fitness_temp[numgenerations] <<std::endl;
-    //     std::cout << fitnesses[numgenerations+print_rank*numgenerations] <<std::endl;
-    // }
- 
-
     free(generations);
     free(fitness_temp);
     free(fitnesses);
 }
 
 void CompareRankFitnessVerbose(int best_island, int& best_global, int& best_rank, int *fitnesses,  int n, int my_rank, int print_rank, int world_size)
+/*
+Gather all islands (ranks) best_island (max fitness) values to arrays on each island and set best_global value on each island. Verbose output for 
+verification.
+*/
 {
-    
     MPI_Allgather(&best_island, 1, MPI_INT, fitnesses, 1, MPI_INT, MPI_COMM_WORLD);
     for(int i=0;i<world_size; i++)
     {
@@ -486,48 +475,57 @@ void CompareRankFitnessVerbose(int best_island, int& best_global, int& best_rank
 
 
 void CompareRankFitness(int best_island, int& best_global, int& best_rank, int* fitnesses,int n, int world_size)
+/*
+Gather all islands (ranks) best_island (max fitness) values to arrays on each island and set best_global value on each island.
+*/
 {
     MPI_Allgather(&best_island, 1, MPI_INT, fitnesses, 1, MPI_INT, MPI_COMM_WORLD);
     best_global =*std::max_element(fitnesses, fitnesses + world_size);
 }
 
 void MigrateRing(int *p, int n, int m, int num_migrations, int my_rank, int world_size)
+/*
+    Migrate num_migrations individuals from island of rank i to island of rank i+1, and island of rank world_size to island rank 0.
+*/
 {
     int rand_individual;
    
-    
-    for(int i=0;i<world_size; i++)
+    for(int j=0; j<num_migrations; j++)
     {
-        rand_individual = ((int)std::rand() % (m-num_migrations+1));
-        if(i<(world_size-1))
+        for(int i=0;i<world_size; i++)
         {
-            if(my_rank==i)
+            rand_individual = ((int)std::rand() % (m));
+            if(i<(world_size-1))
             {
-                //MPI_Send(&(*(p + rand_individual*n)), n*num_migrations, MPI_INT, rand_rank, 0, MPI_COMM_WORLD);
-                MPI_Send(&(p[rand_individual*n]), n*num_migrations, MPI_INT, i+1, 0, MPI_COMM_WORLD);
-            } 
-            else if(my_rank==(i+1))
-            {
-                //MPI_Recv(&(*(p + rand_individual*n)), n*num_migrations, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-                MPI_Recv(&(p[rand_individual*n]), n*num_migrations, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                if(my_rank==i)
+                {
+                    MPI_Send(&(p[rand_individual*n]), n, MPI_INT, i+1, 0, MPI_COMM_WORLD);
+                } 
+                else if(my_rank==(i+1))
+                {
+                    MPI_Recv(&(p[rand_individual*n]), n, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                }
             }
-        }else
-        {
-        if(my_rank==i)
+            else
             {
-                //MPI_Send(&(*(p + rand_individual*n)), n*num_migrations, MPI_INT, rand_rank, 0, MPI_COMM_WORLD);
-                MPI_Send(&(p[rand_individual*n]), n*num_migrations, MPI_INT, 0, 0, MPI_COMM_WORLD);
-            } 
-            else if(my_rank==(i+1))
-            {
-                //MPI_Recv(&(*(p + rand_individual*n)), n*num_migrations, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-                MPI_Recv(&(p[rand_individual*n]), n*num_migrations, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                if(my_rank==i)
+                {
+                    MPI_Send(&(p[rand_individual*n]), n, MPI_INT, 0, 0, MPI_COMM_WORLD);
+                } 
+                else if(my_rank==(i+1))
+                {
+                    MPI_Recv(&(p[rand_individual*n]), n, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                }
             }
         }
     }
 }
 
 void MigrateRand(int *p, int n, int m, int num_migrations, int *rand_rank, int my_rank, int print_rank, int world_size)
+/*
+    Generate and droadcast a rand_rank array of size world_size with random numbers representing random ranks.
+    Migrate num_migrations individuals from island of rank i to random island of rand_rank[i] (if i!=rand_rank[i]).
+*/
 {
     int rand_individual;
 
@@ -565,14 +563,24 @@ void MigrateRand(int *p, int n, int m, int num_migrations, int *rand_rank, int m
 }
 
 void Migrate(int *p, int n, int m, int num_migrations, int *rand_rank, int my_rank, int print_rank, int world_size, int migrate_type)
+/*
+Switch between MigrateRand and  MigrateRing depending on migrate_type. 
+migrate_type = 0 -> Random Migration
+migrate_type = 1 -> Ring Migration
+migrate_type = default (i.e. any number other than 0 or 1) -> Random Migration
+*/
 {
-    if(migrate_type==1)
+    if(migrate_type==0)
     {
         MigrateRand(p, n, m, num_migrations, rand_rank, my_rank, print_rank, world_size);
     }
-    else 
+    else if(migrate_type==1)
     {
         MigrateRing(p, n, m, num_migrations, my_rank, world_size);
+    }
+    else 
+    {
+        MigrateRand(p, n, m, num_migrations, rand_rank, my_rank, print_rank, world_size);
     }
 
 }
