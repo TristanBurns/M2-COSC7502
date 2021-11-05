@@ -1,9 +1,9 @@
 #!/bin/bash -l
 #
-#SBATCH --job-name=MPI_testing_TB
+#SBATCH --job-name=Parallel_1_1024_7270_8
 #SBATCH --nodes=1
-#SBATCH --ntasks=4
-#SBATCH --ntasks-per-node=4
+#SBATCH --ntasks=8
+#SBATCH --ntasks-per-node=8
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=4G # memory (MB)
 #SBATCH --time=0-00:01 # time (D-HH:MM)
@@ -18,11 +18,11 @@ echo $SLURM_NODELIST
 echo "running with OMP_NUM_THREADS= $OMP_NUM_THREADS "
 echo "running with SLURM_TASKS_PER_NODE= $SLURM_TASKS_PER_NODE "
 
-if [ ! -f GeneticAlgorithm ] ; then
+if [ ! -f ${SLURM_JOB_NAME} ] ; then
    echo "unable to find GeneticAlgorithm (mpi version)"
    echo "you probably need to compile code"
    exit 2
 fi
-export current_time=$(date "+%Y.%m.%d-%H.%M.%S")
-
-time mpiexec -n $1 ./GeneticAlgorithm >> outputfile_mpi_$current_time.txt
+export current_time=$(date "+%Hh%Mm%Ss")
+echo ${SLURM_JOB_NAME}_$current_time.txt
+time mpiexec -n ${1} ./${SLURM_JOB_NAME} >> ${SLURM_JOB_NAME}_$current_time.txt

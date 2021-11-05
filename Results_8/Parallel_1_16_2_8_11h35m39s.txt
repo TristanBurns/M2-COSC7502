@@ -1,0 +1,8 @@
+Runtime (microseconds), 12633
+Generation, Fitness Island 0, Fitness Island 1, Fitness Island 2, Fitness Island 3, Fitness Island 4, Fitness Island 5, Fitness Island 6, Fitness Island 7
+0, 11, 11, 9, 13, 12, 12, 12, 12, 
+1, 12, 12, 12, 12, 12, 12, 12, 12, 
+2, 13, 14, 12, 13, 13, 13, 13, 13, 
+3, 13, 15, 12, 13, 14, 14, 14, 14, 
+4, 13, 15, 13, 15, 14, 14, 14, 14, 
+5, 14, 16, 13, 15, 14, 14, 14, 14, 
