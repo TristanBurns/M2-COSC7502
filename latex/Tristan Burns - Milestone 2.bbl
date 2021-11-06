@@ -1,0 +1,32 @@
+\begin{thebibliography}{1}
+
+\bibitem{Luke2013Metaheuristics}
+S.~Luke, {\em Essentials of Metaheuristics}.
+\newblock Lulu, second~ed., 2013.
+
+\bibitem{blum2003metaheuristics}
+C.~Blum and A.~Roli, ``Metaheuristics in combinatorial optimization: Overview
+  and conceptual comparison,'' {\em ACM computing surveys (CSUR)}, vol.~35,
+  no.~3, pp.~268--308, 2003.
+
+\bibitem{mirjalili2019genetic}
+S.~Mirjalili, ``Genetic algorithm,'' in {\em Evolutionary algorithms and neural
+  networks}, pp.~43--55, Springer, 2019.
+
+\bibitem{nowostawski1999parallel}
+M.~Nowostawski and R.~Poli, ``Parallel genetic algorithm taxonomy,'' in {\em
+  1999 Third International Conference on Knowledge-Based Intelligent
+  Information Engineering Systems. Proceedings (Cat. No. 99TH8410)},
+  pp.~88--92, Ieee, 1999.
+
+\bibitem{muhlenbein1991parallel}
+H.~M{\"u}hlenbein, M.~Schomisch, and J.~Born, ``The parallel genetic algorithm
+  as function optimizer,'' {\em Parallel computing}, vol.~17, no.~6-7,
+  pp.~619--632, 1991.
+
+\bibitem{coffin2000statistical}
+M.~Coffin and M.~J. Saltzman, ``Statistical analysis of computational tests of
+  algorithms and heuristics,'' {\em INFORMS Journal on Computing}, vol.~12,
+  no.~1, pp.~24--44, 2000.
+
+\end{thebibliography}

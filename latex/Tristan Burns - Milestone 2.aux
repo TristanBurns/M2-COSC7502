@@ -1,0 +1,104 @@
+\relax 
+\cb@pdfxy{1}{2}{5270255}{31923523}{-20.95378pt}
+\cb@pdfxy{2}{2}{5270255}{31923523}{490.7088pt}
+\cb@barpoint{1}{3}{2.0pt}
+\cb@pdfxy{3}{2}{3789043}{28063455}{-20.95378pt}
+\cb@pdfxy{4}{2}{3789043}{28063455}{490.7088pt}
+\cb@barpoint{4}{3}{2.0pt}
+\citation{Luke2013Metaheuristics}
+\citation{blum2003metaheuristics}
+\citation{mirjalili2019genetic}
+\citation{Luke2013Metaheuristics}
+\citation{mirjalili2019genetic}
+\@writefile{toc}{\contentsline {chapter}{\numberline {1}Serial Implementation}{1}}
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\contentsline {section}{\numberline {1.1}Summary}{1}}
+\cb@pdfxy{5}{4}{5222344}{31542902}{-20.95378pt}
+\cb@pdfxy{6}{4}{5222344}{31542902}{490.7088pt}
+\cb@barpoint{5}{5}{2.0pt}
+\cb@pdfxy{7}{4}{3789043}{30042130}{-20.95378pt}
+\cb@pdfxy{8}{4}{3789043}{30042130}{490.7088pt}
+\cb@barpoint{8}{5}{2.0pt}
+\@writefile{toc}{\contentsline {section}{\numberline {1.2}Implementation}{1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2.1}Algorithm}{1}}
+\cb@pdfxy{9}{4}{30203572}{23732835}{-20.95378pt}
+\cb@pdfxy{10}{4}{30203572}{23732835}{490.7088pt}
+\cb@barpoint{9}{5}{2.0pt}
+\cb@pdfxy{11}{4}{3789043}{4144127}{-20.95378pt}
+\cb@pdfxy{12}{4}{3789043}{4144127}{490.7088pt}
+\cb@pdfxy{9}{6}{3789043}{48310110}{-20.95378pt}
+\cb@pdfxy{10}{6}{3789043}{48310110}{490.7088pt}
+\cb@pdfxy{11}{6}{3789043}{42022295}{-20.95378pt}
+\cb@pdfxy{12}{6}{3789043}{42022295}{490.7088pt}
+\cb@barpoint{12}{7}{2.0pt}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces The Genetic Algorithm}}{2}}
+\newlabel{alg:cap}{{1}{2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2.2}OneMax Problem}{2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2.3}Program Implementation}{2}}
+\newlabel{progimp}{{1.2.3}{2}}
+\@writefile{toc}{\contentsline {section}{\numberline {1.3}Verification}{3}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.1}{\ignorespaces Normalised fitness vs number of generations, \(n\), for a population size of \(m=100\) and a chromosome size of \(n=1024\). Different random seeds where used (light grey results), with the average plotted in black, demonstrating robust convergence for large problem size.}}{3}}
+\@writefile{toc}{\contentsline {section}{\numberline {1.4}Performance Optimisation}{4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.4.1}Manual Optimisation}{4}}
+\cb@pdfxy{13}{10}{15879750}{16964061}{-20.95378pt}
+\cb@pdfxy{14}{10}{15879750}{16964061}{490.7088pt}
+\cb@barpoint{13}{11}{2.0pt}
+\cb@pdfxy{15}{10}{3789043}{14713266}{-20.95378pt}
+\cb@pdfxy{16}{10}{3789043}{14713266}{490.7088pt}
+\cb@barpoint{16}{11}{2.0pt}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.4.2}Optimisation Flags}{4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.4.3}Performance Results}{5}}
+\newlabel{serialperf}{{1.4.3}{5}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.2}{\ignorespaces Average runtime (ten trials) vs chromosome size, \(n\), for a population size of \(m=100\) individuals. Based on different optimisation flags a \(\sim 2.8\times \) speedup is achieved. These results were computed using the same random seed, \textit  {seed }\(=42\).}}{5}}
+\citation{nowostawski1999parallel}
+\citation{nowostawski1999parallel}
+\citation{nowostawski1999parallel}
+\citation{nowostawski1999parallel}
+\@writefile{toc}{\contentsline {chapter}{\numberline {2}Parallel Implementation}{6}}
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\contentsline {section}{\numberline {2.1}Parallelization Approach}{6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1.1}Approach}{6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1.2}Migration}{6}}
+\newlabel{Mig}{{2.1.2}{6}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2.1}{\ignorespaces Depiction of migration approaches investigated for \(k=4\) islands. Subfigure \textbf  {(a)} depicts parallelisation \emph  {without} migration, which is essentially a race to the maximum fitness individual between each of the subpopulations. Subfigures \textbf  {(b)} and \textbf  {(c)} depicts ring migration and random migration, respectively. The blue arrows in subfigures \textbf  {(b)} and \textbf  {(c)} represent the direction individuals migrate between islands in a generation. The green dashed arrows and numbers in subfigure \textbf  {(c)} represents the random target islands (ranks) broadcast by island 0 to all islands, each generation.}}{7}}
+\newlabel{migration_diagram}{{2.1}{7}}
+\@writefile{toc}{\contentsline {section}{\numberline {2.2}Experimental Methodology and Plan}{8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2.1}Overview}{8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2.2}Migration Experiments}{8}}
+\newlabel{migexp}{{2.2.2}{8}}
+\@writefile{lot}{\contentsline {table}{\numberline {2.1}{\ignorespaces Migration experiment parameters.}}{8}}
+\newlabel{migtab}{{2.1}{8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2.3}Performance Experiments}{8}}
+\newlabel{perfexp}{{2.2.3}{8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2.4}Use of Stream Editor (sed)}{9}}
+\@writefile{lot}{\contentsline {table}{\numberline {2.2}{\ignorespaces Performance experiment parameters. The * denotes parameters which were selected based on the results of the migration experiments presented in Section 2.3.1\hbox {}.}}{10}}
+\newlabel{perftab}{{2.2}{10}}
+\citation{coffin2000statistical}
+\@writefile{toc}{\contentsline {section}{\numberline {2.3}Results}{11}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3.1}Migration Results}{11}}
+\newlabel{migresults}{{2.3.1}{11}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2.2}{\ignorespaces Migration results for both ring migration and random migration are presented in subfigure \textbf  {(a)}. Subfigure \textbf  {(b)} zooms in on the random migration results.}}{11}}
+\newlabel{migresfig}{{2.2}{11}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3.2}Performance Results}{11}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2.3}{\ignorespaces Runtime as a function of chromosome size for different numbers of islands (MPI ranks).}}{12}}
+\newlabel{runtimeperf}{{2.3}{12}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2.4}{\ignorespaces Log runtime as a function of log chromosome size for different numbers of islands (MPI ranks). A linear regression of the serial results is included with the equation depicted on the plot. }}{13}}
+\newlabel{logruntimeperf}{{2.4}{13}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2.5}{\ignorespaces Average runtime speedup as a function of number of islands (MPI ranks) for chromosome sizes from \(n=64\) to \(n=32768\).}}{13}}
+\newlabel{speedup}{{2.5}{13}}
+\citation{Luke2013Metaheuristics}
+\citation{muhlenbein1991parallel}
+\@writefile{toc}{\contentsline {section}{\numberline {2.4}Discussion}{14}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4.1}Outcomes}{14}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4.2}Limitations}{14}}
+\bibstyle{ieeetr}
+\bibdata{coscbibdemo}
+\@writefile{toc}{\contentsline {section}{\numberline {2.5}Conclusion}{15}}
+\bibcite{Luke2013Metaheuristics}{1}
+\bibcite{blum2003metaheuristics}{2}
+\bibcite{mirjalili2019genetic}{3}
+\bibcite{nowostawski1999parallel}{4}
+\bibcite{muhlenbein1991parallel}{5}
+\bibcite{coffin2000statistical}{6}
