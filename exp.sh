@@ -16,7 +16,9 @@ do
             sed -i "17 s/#define seed [0-9]\+/#define seed ${seed}/" main.cpp
         fi
         make
+        sleep 1
         mpiexec -n 4 ./GeneticAlgorithm >> ${outputname}
-done
+        sleep 10
     done
+done
    

@@ -1,6 +1,6 @@
 #!/bin/bash -l
 #
-#SBATCH --job-name=Parallel_1_1024_7270_8
+#SBATCH --job-name=Parallel_1_1024_42_8
 #SBATCH --nodes=1
 #SBATCH --ntasks=8
 #SBATCH --ntasks-per-node=8
